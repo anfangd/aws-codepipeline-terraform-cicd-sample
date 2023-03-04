@@ -14,10 +14,10 @@
         - "tfenv use $TF_VERSION"
     pre_build:
       commands:
-        - "terraform validate"
         - "terraform init -input=false -no-color"
     build:
       commands:
+        - "terraform validate"
         - "terraform plan -input=false -no-color"
     post_build:
       commands:
