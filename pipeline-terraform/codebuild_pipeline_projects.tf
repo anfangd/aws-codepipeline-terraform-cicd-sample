@@ -1,6 +1,7 @@
 #============================================================
 # 4. CodeBuild
 #============================================================
+
 resource "aws_codebuild_project" "terraform_codebuild_project" {
 
   name           = "${var.system_name}-plan"
@@ -23,7 +24,7 @@ resource "aws_codebuild_project" "terraform_codebuild_project" {
   }
   source {
     type      = var.build_project_source
-    buildspec = "./ci/buildspec_plan.yml"
+    buildspec = "./ci/terraform/buildspec_plan.yml"
   }
 }
 

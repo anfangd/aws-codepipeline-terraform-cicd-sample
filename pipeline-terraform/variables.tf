@@ -28,13 +28,13 @@ variable "builder_compute_type" {
 variable "builder_image" {
   description = "Docker Image to be used by codebuild"
   type        = string
-  default     = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+  default     = "687705090937.dkr.ecr.ap-northeast-1.amazonaws.com/terraform:latest"
 }
 
 variable "builder_type" {
   description = "Image pull credentials type used by codebuild project"
   type        = string
-  default     = "LINUX_CONTAINER"
+  default     = "ARM_CONTAINER"
 }
 
 variable "builder_image_pull_credentials_type" {
