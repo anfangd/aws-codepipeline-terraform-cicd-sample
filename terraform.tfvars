@@ -1,0 +1,7 @@
+system_name        = "supernova"
+github_source_repo = "anfangd/aws-codepipeline-terraform-cicd-sample"
+environment        = "dev"
+# builder_compute_type = ""
+# builder_image        = ""
+# builder_type         = ""
+# build_project_source = ""

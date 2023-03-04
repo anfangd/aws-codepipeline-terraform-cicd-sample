@@ -1,0 +1,25 @@
+  version: 0.2
+  env:
+    exported-variables:
+      - BuildID
+      - BuildTag
+  phases:
+    install:
+      runtime-versions:
+        golang: 1.14
+      commands:
+        - "git clone https://github.com/tfutils/tfenv.git ~/.tfenv"
+        - "ln -s ~/.tfenv/bin/* /usr/local/bin"
+        - "tfenv install $TF_VERSION"
+        - "tfenv use $TF_VERSION"
+    pre_build:
+      commands:
+        - "terraform validate"
+        - "terraform init -input=false -no-color"
+    build:
+      commands:
+        - "terraform plan -input=false -no-color"
+    post_build:
+      commands:
+        - "export BuildID=`echo $CODEBUILD_BUILD_ID | cut -d: -f1`"
+        - "export BuildTag=`echo $CODEBUILD_BUILD_ID | cut -d: -f2`"
