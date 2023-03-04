@@ -14,10 +14,10 @@ variable "github_source_repo_branch" {
   default     = "main"
 }
 
-variable "environment" {
-  description = "Environment in which the script is run. Eg: dev, stg, prd, etc"
-  type        = string
-}
+# variable "environment" {
+#   description = "Environment in which the script is run. Eg: dev, stg, prd, etc"
+#   type        = string
+# }
 
 variable "builder_compute_type" {
   description = "Relative path to the Apply and Destroy"
