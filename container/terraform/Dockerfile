@@ -3,6 +3,8 @@
 FROM public.ecr.aws/amazonlinux/amazonlinux:2.0.20230221.0-arm64v8
 
 ENV TERRAFORM_VERSION 1.3.9
+ENV TFLINT_VER 0.45.0
+ENV TFLINT_RULE_SET_AWS_VER=0.21.2
 ENV TFSEC_VERSION 1.28.1
 
 # install awscli
@@ -23,6 +25,17 @@ RUN yum update -y && yum install -y \
 # Install tfenv
 RUN git clone https://github.com/tfutils/tfenv.git ~/.tfenv \
   && ln -s ~/.tfenv/bin/* /usr/local/bin
+
+RUN curl --fail --silent -L -o /tmp/tflint.zip https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VER}/tflint_linux_amd64.zip && \
+    unzip /tmp/tflint.zip -d /tmp/ && \
+    install -c -v /tmp/tflint /usr/local/bin/ && \
+    rm /tmp/tflint*
+
+# tflint rule
+RUN mkdir -p  ~/.tflint.d/plugins/github.com/terraform-linters/tflint-ruleset-aws/${TFLINT_RULE_SET_AWS_VER}/ && \
+    curl --fail --silent -L -o /tmp/tflint-ruleset-aws.zip https://github.com/terraform-linters/tflint-ruleset-aws/releases/download/v${TFLINT_RULE_SET_AWS_VER}/tflint-ruleset-aws_linux_amd64.zip && \
+    unzip /tmp/tflint-ruleset-aws.zip -d ~/.tflint.d/plugins/github.com/terraform-linters/tflint-ruleset-aws/${TFLINT_RULE_SET_AWS_VER}/ && \
+    rm /tmp/tflint-ruleset-aws.zip
 
 # Install tfsec
 RUN curl -Lso tfsec https://github.com/tfsec/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64
