@@ -19,6 +19,8 @@
     build:
       commands:
         - "terraform validate"
+        - "tflint"
+        - "tfsec"
         - "terraform plan -input=false -no-color"
     post_build:
       commands:
