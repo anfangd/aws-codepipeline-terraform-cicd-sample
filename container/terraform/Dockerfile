@@ -1,6 +1,6 @@
 # cf. https://gallery.ecr.aws/amazonlinux/amazonlinux
 # cf. https://dev.classmethod.jp/articles/tips-for-aws-cli-v2-on-container/
-FROM public.ecr.aws/amazonlinux/amazonlinux:2.0.20230221.0-arm64v8
+FROM public.ecr.aws/amazonlinux/amazonlinux:2
 
 ENV TERRAFORM_VERSION 1.3.9
 # ENV TFLINT_VER 0.45.0
@@ -26,6 +26,7 @@ RUN yum update -y && yum install -y \
 RUN git clone https://github.com/tfutils/tfenv.git ~/.tfenv \
   && ln -s ~/.tfenv/bin/* /usr/local/bin
 
+# Install tflint
 RUN curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
 # tflint rule
@@ -35,5 +36,5 @@ RUN mkdir -p  ~/.tflint.d/plugins/github.com/terraform-linters/tflint-ruleset-aw
     rm /tmp/tflint-ruleset-aws.zip
 
 # Install tfsec
-RUN curl -Lso tfsec https://github.com/tfsec/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64
-RUN chmod +x tfsec && mv tfsec /usr/local/bin/
+RUN curl -Lso tfsec https://github.com/tfsec/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64 \
+  && chmod +x tfsec && mv tfsec /usr/local/bin/

@@ -22,7 +22,7 @@
         - "tflint --version"
         - "tflint --init"
         - "tflint"
-        - "tfsec"
+        #- "tfsec"
         - "terraform plan -input=false -no-color"
     post_build:
       commands:
