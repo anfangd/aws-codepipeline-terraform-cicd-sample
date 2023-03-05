@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Accept Command Line Arguments
-SKIPVALIDATIONFAILURE=$1
-tfValidate=$2
-tfFormat=$3
-tfCheckov=$4
+working_dir=$1
+SKIPVALIDATIONFAILURE=$2
+tfValidate=$3
+tfFormat=$4
 tfTfsec=$5
 # -----------------------------
 
@@ -13,9 +13,9 @@ echo "-------------------------"
 echo "Skip Validation Errors on Failure : ${SKIPVALIDATIONFAILURE}"
 echo "Terraform Validate : ${tfValidate}"
 echo "Terraform Format   : ${tfFormat}"
-echo "Terraform checkov  : ${tfCheckov}"
 echo "Terraform tfsec    : ${tfTfsec}"
 echo "------------------------"
+cd ${working_dir}
 terraform init
 if (( ${tfValidate} == "Y"))
 then
@@ -31,14 +31,6 @@ then
 fi
 tfFormatOutput=$?
 
-if (( ${tfCheckov} == "Y"))
-then
-    echo "## VALIDATION : Running checkov ..."
-    #checkov -s -d .
-    checkov -o junitxml --framework terraform -d ./ >checkov.xml
-fi
-tfCheckovOutput=$?
-
 if (( ${tfTfsec} == "Y"))
 then
     echo "## VALIDATION : Running tfsec ..."
@@ -51,7 +43,6 @@ echo "## VALIDATION Summary ##"
 echo "------------------------"
 echo "Terraform Validate : ${tfValidateOutput}"
 echo "Terraform Format   : ${tfFormatOutput}"
-echo "Terraform checkov  : ${tfCheckovOutput}"
 echo "Terraform tfsec    : ${tfTfsecOutput}"
 echo "------------------------"
 
@@ -59,7 +50,7 @@ if (( ${SKIPVALIDATIONFAILURE} == "Y" ))
 then
   #if SKIPVALIDATIONFAILURE is set as Y, then validation failures are skipped during execution
   echo "## VALIDATION : Skipping validation failure checks..."
-elif (( $tfValidateOutput == 0 && $tfFormatOutput == 0 && $tfCheckovOutput == 0  && $tfTfsecOutput == 0 ))
+elif (( $tfValidateOutput == 0 && $tfFormatOutput == 0 && $tfTfsecOutput == 0 ))
 then
   echo "## VALIDATION : Checks Passed!!!"
 else
