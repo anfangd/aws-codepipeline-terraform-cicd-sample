@@ -2,11 +2,16 @@
 
 ![](./docs/img/concept.drawio.svg)
 
+
 ## Terraform Resource Architecture | Terraform Deployment Pipeline
 
 ![](./docs/img/ModuleRelationshipDiagram.drawio.svg)
 
 ## Docker Image for CodeBuld
+
+CodeBuild で使用するイメージのソフトウェア構成
+
+![](./docs/img/TerraformDockerImage.drawio.svg)
 
 ```sh
 # 1. Retrieve an authentication token and authenticate your Docker client to your registry.

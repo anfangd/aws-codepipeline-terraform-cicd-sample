@@ -1,30 +1,39 @@
-  version: 0.2
-  env:
-    exported-variables:
-      - BuildID
-      - BuildTag
-  phases:
-    install:
-      runtime-versions:
-        golang: 1.14
-      commands:
-        # - "git clone https://github.com/tfutils/tfenv.git ~/.tfenv"
-        # - "ln -s ~/.tfenv/bin/* /usr/local/bin"
-        - "tfenv install $TF_VERSION"
-        - "tfenv use $TF_VERSION"
-    pre_build:
-      commands:
-        - "cd pipeline-terraform"
-        - "terraform init -input=false -no-color"
-    build:
-      commands:
-        - "terraform validate"
-        - "tflint --version"
-        - "tflint --init"
-        - "tflint"
-        - "tfsec"
-        - "terraform plan -input=false -no-color"
-    post_build:
-      commands:
-        - "export BuildID=`echo $CODEBUILD_BUILD_ID | cut -d: -f1`"
-        - "export BuildTag=`echo $CODEBUILD_BUILD_ID | cut -d: -f2`"
+version: 0.2
+env:
+  variables:
+    CODE_SRC_DIR: "."
+    SCRIPT_DIR: "./bin"
+    SKIPVALIDATIONFAILURE: "Y"
+    ENABLE_TFVALIDATE: "Y"
+    ENABLE_TFFORMAT: "Y"
+    ENABLE_TFCHECKOV: "Y"
+    ENABLE_TFSEC: "Y"
+  exported-variables:
+    - BuildID
+    - BuildTag
+phases:
+  install:
+    runtime-versions:
+      golang: 1.14
+    commands:
+      # - "git clone https://github.com/tfutils/tfenv.git ~/.tfenv"
+      # - "ln -s ~/.tfenv/bin/* /usr/local/bin"
+      - "tfenv install $TF_VERSION"
+      - "tfenv use $TF_VERSION"
+  pre_build:
+    commands:
+      - "cd pipeline-terraform"
+      - "terraform init -input=false -no-color"
+  build:
+    commands:
+      - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}"
+      - "echo ## TERRAFORM INIT : Initialize the Terraform Workspace"
+      - "terraform init"
+      - "echo ## VALIDATION : Starting ..."
+      - "mkdir -p ${CODEBUILD_SRC_DIR}/reports"
+      - "/bin/bash ${CODEBUILD_SRC_DIR}/${SCRIPT_DIR}/validation.sh ${SKIPVALIDATIONFAILURE} ${ENABLE_TFVALIDATE} ${ENABLE_TFFORMAT} ${ENABLE_TFCHECKOV} ${ENABLE_TFSEC}"
+      - "cp tfsec-junit.xml ${CODEBUILD_SRC_DIR}/reports/tfsec-junit.xml"
+  post_build:
+    commands:
+      - "export BuildID=`echo $CODEBUILD_BUILD_ID | cut -d: -f1`"
+      - "export BuildTag=`echo $CODEBUILD_BUILD_ID | cut -d: -f2`"
