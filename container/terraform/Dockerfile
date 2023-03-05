@@ -12,15 +12,10 @@ RUN yum update -y && yum install -y \
   unzip \
   less \
   git \
+  wget \
   && curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" \
   && unzip awscliv2.zip \
   && ./aws/install
-
-# Install Terraform
-# RUN cd /usr/local/bin && \
-#   curl https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
-#   unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
-#   rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
 # Install tfenv
 RUN git clone https://github.com/tfutils/tfenv.git ~/.tfenv \
@@ -36,5 +31,13 @@ RUN mkdir -p  ~/.tflint.d/plugins/github.com/terraform-linters/tflint-ruleset-aw
     rm /tmp/tflint-ruleset-aws.zip
 
 # Install tfsec
-RUN curl -Lso tfsec https://github.com/tfsec/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-amd64 \
-  && chmod +x tfsec && mv tfsec /usr/local/bin/
+# cf. https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/patterns/create-a-ci-cd-pipeline-to-validate-terraform-configurations-by-using-aws-codepipeline.html
+# TODO: インストールはできても実行できない
+RUN wget -q -O tfsec https://github.com/aquasecurity/tfsec/releases/download/v${TFSEC_VERSION}/tfsec-linux-arm64 \
+  && chmod +x tfsec \
+  && mv tfsec /usr/local/bin/
+
+# tfnotify
+#   - PR: Pull Request へコメント
+#   - Schedule: Slack へコメント
+#   - 手動実行: ログのみ。
