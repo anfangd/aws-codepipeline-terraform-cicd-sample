@@ -28,11 +28,10 @@ phases:
     commands:
       - "cd ${CODEBUILD_SRC_DIR}/${CODE_SRC_DIR}"
       - "echo ## TERRAFORM INIT : Initialize the Terraform Workspace"
-      - "terraform init"
       - "echo ## VALIDATION : Starting ..."
       - "mkdir -p ${CODEBUILD_SRC_DIR}/reports"
       - "/bin/bash ${CODEBUILD_SRC_DIR}/${SCRIPT_DIR}/validation.sh pipeline-terraform ${SKIPVALIDATIONFAILURE} ${ENABLE_TFVALIDATE} ${ENABLE_TFFORMAT} ${ENABLE_TFCHECKOV} ${ENABLE_TFSEC}"
-      - "cp tfsec-junit.xml ${CODEBUILD_SRC_DIR}/reports/tfsec-junit.xml"
+      - "cp pipeline-terraform/tfsec-junit.xml ${CODEBUILD_SRC_DIR}/reports/tfsec-junit.xml"
   post_build:
     commands:
       - "export BuildID=`echo $CODEBUILD_BUILD_ID | cut -d: -f1`"
