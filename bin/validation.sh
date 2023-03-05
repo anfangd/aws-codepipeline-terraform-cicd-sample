@@ -4,7 +4,7 @@
 working_dir=$1
 SKIPVALIDATIONFAILURE=$2
 tfValidate=$3
-tfFormat=$4
+tfLint=$4
 tfTfsec=$5
 # -----------------------------
 
@@ -12,7 +12,7 @@ echo "### VALIDATION Overview ###"
 echo "-------------------------"
 echo "Skip Validation Errors on Failure : ${SKIPVALIDATIONFAILURE}"
 echo "Terraform Validate : ${tfValidate}"
-echo "Terraform Format   : ${tfFormat}"
+echo "Terraform tflint   : ${tfLint}"
 echo "Terraform tfsec    : ${tfTfsec}"
 echo "------------------------"
 cd ${working_dir}
@@ -24,12 +24,12 @@ then
 fi
 tfValidateOutput=$?
 
-if (( ${tfFormat} == "Y"))
+if (( ${tfLint} == "Y"))
 then
-    echo "## VALIDATION : Formatting Terraform code ..."
-    terraform fmt -recursive
+    echo "## VALIDATION : Lint Terraform code ..."
+    tflint
 fi
-tfFormatOutput=$?
+tfLintOutput=$?
 
 if (( ${tfTfsec} == "Y"))
 then
@@ -42,7 +42,7 @@ tfTfsecOutput=$?
 echo "## VALIDATION Summary ##"
 echo "------------------------"
 echo "Terraform Validate : ${tfValidateOutput}"
-echo "Terraform Format   : ${tfFormatOutput}"
+echo "Terraform tflint   : ${tfLintOutput}"
 echo "Terraform tfsec    : ${tfTfsecOutput}"
 echo "------------------------"
 
@@ -50,7 +50,7 @@ if (( ${SKIPVALIDATIONFAILURE} == "Y" ))
 then
   #if SKIPVALIDATIONFAILURE is set as Y, then validation failures are skipped during execution
   echo "## VALIDATION : Skipping validation failure checks..."
-elif (( $tfValidateOutput == 0 && $tfFormatOutput == 0 && $tfTfsecOutput == 0 ))
+elif (( $tfValidateOutput == 0 && $tfLintOutput == 0 && $tfTfsecOutput == 0 ))
 then
   echo "## VALIDATION : Checks Passed!!!"
 else
